@@ -1,0 +1,33 @@
+{
+  "name": "queue",
+  "module": "index.ts",
+  "scripts": {
+    "worker": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --no-deprecation worker.ts",
+    "db:generate": "bunx prisma generate",
+    "db:migrate": "bunx prisma migrate",
+    "startall": "docker compose -f config/other/postgres/docker-compose.yml up -d && docker exec -i postgres sh < scripts/make_postgres_db.sh",
+    "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --no-deprecation index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.0.1",
+    "@swc/core": "^1.10.0",
+    "@theinternetfolks/context": "^2.1.0",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/express": "^5.0.0",
+    "axios": "^1.7.9",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg-boss": "9.0.3",
+    "prisma": "^6.0.1",
+    "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
+    "web3": "^4.16.0"
+  }
+}
