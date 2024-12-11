@@ -20,6 +20,7 @@
     "@theinternetfolks/context": "^2.1.0",
     "@types/cookie-parser": "^1.4.8",
     "@types/express": "^5.0.0",
+    "apify-client": "^2.10.0",
     "axios": "^1.7.9",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
