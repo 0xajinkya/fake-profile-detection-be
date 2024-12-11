@@ -11,7 +11,25 @@ const Add = async (req: Request, res: Response) => {
      */
     const someSampleProfileMetadataForPrediction = {
         ...profilePredRes,
-        feature_vector: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        feature_vector: [
+            10,
+            66,
+            321,
+            150,
+            1,
+            0,
+            213,
+            0,
+            1,
+            14.390000343,
+            1.9700000286,
+            0,
+            1.5,
+            0,
+            0,
+            0.2068260014,
+            230.41285706
+        ]
     };
 
     queue.publish("PREDICT_PROFILE", {
