@@ -39,3 +39,23 @@ model Prediction {
 
   @@unique([host, username])
 }
+
+model PredictionPost {
+  
+  id String @id @unique @default(uuid())
+
+  host        Host              @default(TWITTER)
+  tweet     String
+  keywords String
+  statement String?
+  label_probability String? @default("Disagree")
+  prediction  PredictionStatus?
+  remarks     String?
+  profileInfo Json?             @default("{}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([host, tweet])
+}
+
