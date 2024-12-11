@@ -25,12 +25,14 @@ enum Host {
 }
 
 model Prediction {
+  
   id String @id @unique @default(uuid())
 
-  host       Host             @default(TWITTER)
-  username   String
-  prediction PredictionStatus?
-  remarks    String?
+  host        Host              @default(TWITTER)
+  username    String
+  prediction  PredictionStatus?
+  remarks     String?
+  profileInfo Json?             @default("{}")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

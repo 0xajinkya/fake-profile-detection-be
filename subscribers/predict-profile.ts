@@ -1,4 +1,5 @@
 import { IPrediction } from "@interfaces/prediction";
+import { InputJsonObject } from "@prisma/client/runtime/library";
 import { BlockchainService } from "@services/blockchain";
 import { database, IJobProcessor, queue } from "libraries";
 
@@ -30,16 +31,43 @@ export const PredictProfile: IJobProcessor<any> = async (job) => {
         }
     });
 
+
     if (!predictionRes) {
+        /**
+         * @todo: Create a prediction object if it does not exists!
+         */
         return false;
     }
 
+    /**
+     * @todo: Make an API or run a function to fetch the details of the profile
+    */
+    //Sample profileInfo
+    const profileInfo = {
+        username: profileData.username,
+        host: profileData.host,
+        name: "Min Lee",
+        bio: "I am a software engineer",
+        profile_picture: "https://avatars.githubusercontent.com/u/10028315?v=4",
+        cover_photo: "https://avatars.githubusercontent.com/u/10028315?v=4",
+        location: "Seoul, Korea",
+        website: "https://github.com/minlee",
+        followers: 100,
+        following: 100,
+        posts: 100,
+        media: 100,
+        created_at: "2021-09-01T00:00:00.000Z",
+        updated_at: "2021-09-01T00:00:00.000Z"
+    };
+
     await database.instance?.prediction.update({
         data: {
-            prediction: resultDoc.status as "REAL" | "FAKE"
+            prediction: resultDoc.status as "REAL" | "FAKE",
+            profileInfo: profileInfo as InputJsonObject,
+            updatedAt: new Date()
         },
         where: {
-            id: predictionRes.id
+            id: predictionRes.id,
         }
     })
 

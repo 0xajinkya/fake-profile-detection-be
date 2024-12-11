@@ -2,13 +2,13 @@ import { IJobProcessor, queue } from "libraries";
 
 export const PredictPost: IJobProcessor<any> = async (job) => {
     console.log("🚀 PredictPost", job);
+    job.data = {};
 
     /**
      * @todo : Add logic to predict the post
      * @how : Send request to the deployed instance of model by passing the `feature_vector` in the body
      * @assumption : The result will be stored in resultDoc.
-     */
-
+    */
     const resultDoc = {
         status: "Fake"
     };
