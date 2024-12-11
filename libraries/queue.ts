@@ -44,7 +44,7 @@ const subscribe = async <T = RawDocument>(
     });
 };
 
-const fail = async (id: string) => {
+const fail = async (id: string, p0: any) => {
     if (!queue.instance) {
         throw new Error('✈️ queue not initialized');
     }
