@@ -10,4 +10,7 @@ ProfilePredictionRouter.post("/", ProfilePredictionController.Add)
 ProfilePredictionRouter.get("/by-host", ProfilePredictionController.GetByHost)
 
 //@ts-ignore
+ProfilePredictionRouter.post("/search", ProfilePredictionController.Search)
+
+//@ts-ignore
 ProfilePredictionRouter.get("/:id", ProfilePredictionController.Get)

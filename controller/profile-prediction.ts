@@ -1,4 +1,7 @@
+import { APIFY_API_KEY } from "@config/env";
+import { TwitterResponse } from "@interfaces/tweet";
 import { Host } from "@prisma/client";
+import { FetcherService } from "@services/fetcher";
 import { ProfilePredictionService } from "@services/profile-prediction"
 import { Request, Response } from "express"
 import { queue } from "libraries";
@@ -73,8 +76,47 @@ const Get = async (req: Request, res: Response) => {
     })
 }
 
+const Search = async (req: Request, res: Response) => {
+    const {
+        username,
+    } = req.body;
+    if (!username) {
+        throw new Error("❌ Username not provided!");
+    }
+    console.log(APIFY_API_KEY)
+    // const profileRes = await ProfilePredictionService.Search(username as string);
+    const profileRes = await FetcherService.Fetch<TwitterResponse[]>(username as string, true);
+
+    let predictionRes = await ProfilePredictionService.GetByHost(username as string, "TWITTER");
+    if (!predictionRes) {
+        predictionRes = await ProfilePredictionService.Add({
+            host: "TWITTER",
+            username,
+            profileInfo: {
+                datasetId: profileRes.data.data.defaultDatasetId
+            }
+        });
+    } else {
+        predictionRes = await ProfilePredictionService.Update(predictionRes?.id, {
+            profileInfo: {
+                datasetId: profileRes.data.data.defaultDatasetId
+            }
+        })
+    }
+    return res.status(200).json({
+        status: true,
+        content: {
+            data: predictionRes,
+            meta: {
+                message: "Fetching profile details, we'll update you soon as we get the results."
+            }
+        }
+    })
+}
+
 export const ProfilePredictionController = {
     Add,
     GetByHost,
-    Get
+    Get,
+    Search
 }

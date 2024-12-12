@@ -3,13 +3,15 @@ import { database } from "./database";
 import { queue } from "./queue";
 import cookieparser from 'cookie-parser';
 import { Context } from "@theinternetfolks/context";
+import { FetcherService } from "@services/fetcher";
+import { blockchain } from "./blockchain";
 
 export const AppLoader = async ({
     app
 }: {
     app?: Application
 }) => {
-    Promise.all([database.Loader(), queue.Loader()]).catch((e) => console.error(e));
+    Promise.all([database.Loader(), queue.Loader(), FetcherService.Loader(), blockchain.Loader()]).catch((e) => console.error(e));
     if (app) {
         app.enable("trust proxy");
 

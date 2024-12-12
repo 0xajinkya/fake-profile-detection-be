@@ -1,18 +1,32 @@
 import { APIFY_API_KEY } from "@config/env";
+import { TwitterResponse } from "@interfaces/tweet";
 import { ApifyClient } from "apify-client";
-import fs from 'node:fs';
+import axios from "axios";
 
 const client = new ApifyClient({
-    token: APIFY_API_KEY,
+    token: "apify_api_bcZ28YiJ9Goaw0hptGe5y4R97Ihhtk1DirFQ",
 });
 
-const Fetch = async (username: string, withTweets?: boolean) => {
+const Loader = async () => {
+    const webhooksClient = await client.webhooks();
+    await webhooksClient.create({
+        description: 'Twitter profile actor succeeded',
+        condition: { actorId: 'wbpC5fjeAxy06bonV' },
+        requestUrl: 'https://85ec-2409-40c2-6056-20cc-db62-abb4-5de5-3fbe.ngrok-free.app/webhooks',
+        // requestUrl: "https://webhook.site/bcae8819-3a4c-4fe2-827f-9d1390764807",
+        eventTypes: ['ACTOR.RUN.SUCCEEDED'],
+    });
+    console.log("🚀 Webhooks listening!!")
+}
+
+const Fetch = async <T>(username: string, withTweets?: boolean) => {
+
     const input = {
         "startUrls": [
-            `https://x.com/${username}`
+            `https://twitter.com/${username}`
         ],
         "maxTweetsPerUser": 10,
-        "onlyUserInfo": withTweets ? false : true, //make this false to fetch profile as well.
+        "onlyUserInfo": !withTweets, //make this false to only fetch profile.
         "addNotFoundUsersToOutput": false,
         "addSuspendedUsersToOutput": false,
         "addUserInfo": true,
@@ -22,97 +36,53 @@ const Fetch = async (username: string, withTweets?: boolean) => {
         }
     };
 
-    const run = await client.actor("wbpC5fjeAxy06bonV").call(input);
+    const run = await axios.post("https://api.apify.com/v2/acts/epctex~twitter-profile-scraper/runs?token=apify_api_bcZ28YiJ9Goaw0hptGe5y4R97Ihhtk1DirFQ", input);
 
-    // Fetch Actor results from the run's dataset (if any)
-    console.log('Results from dataset');
-    const { items } = await client.dataset(run.defaultDatasetId).listItems();
+    return run;
+};
 
-    // Write results to a JSON file
-    fs.writeFile('output.json', JSON.stringify(items, null, 2), (err) => {
-        if (err) {
-            console.error('Error saving to file:', err);
-        } else {
-            console.log('Results have been saved to output.json');
-        }
-    });
+const ExtractStats = (tweets: TwitterResponse[]) => {
+    const user = tweets[0].user;
+    
+    const objForPrediction = {
+        //Number of posts
+        pos: user.statuses_count,
+        //Number of followers
+        flw: user.followers_count,
+        //Number of followings
+        flg: user.friends_count,
+        //Biography Length
+        bl: user.description.length ?? 0,
+        //Profile Picture Present
+        pic: Boolean(user.profile_image_url_https) ? 1 : 0,
+        //Links Present
+        lin: user.entities.description.urls.length > 0 ? 1 : 0,
+        // Average caption length
+        cl: (tweets.map(tweet => tweet.full_text.length).reduce((a, b) => a + b, 0)) / 10,
+        //Percentage of tweets with captions less than 3 characters
+        cz: tweets.filter(tweet => tweet.full_text.length <= 3).length / 10,
+        //Percentage of tweets without media
+        ni: tweets.filter(tweet => !tweet.entities.media || tweet.entities.media.length === 0).length / 10,
+        //Engagement Rate
+        erl: ((tweets.reduce((a, b) => a + b.favorite_count, 0) / 10) / user.followers_count),
+        //Engagement Rate For Comments
+        erc: ((tweets.reduce((a, b) => a + b.reply_count, 0) / 10) / user.followers_count),
+        //Hashtags Average Count
+        hc: tweets.reduce((a, b) => a + b.entities.hashtags.length, 0) / 10,
+    }
 
-    return items;
+    console.log(objForPrediction);
+    
+    return objForPrediction;
+};
 
-    //Sample response
-    // [
-        // {
-        //   __typename: "User",
-        //   id: "VXNlcjo0NDE5NjM5Nw==",
-        //   rest_id: "44196397",
-        //   affiliates_highlighted_label: {
-        //     label: [Object ...],
-        //   },
-        //   is_blue_verified: true,
-        //   profile_image_shape: "Circle",
-        //   legacy: {
-        //     created_at: "Tue Jun 02 20:12:29 +0000 2009",
-        //     default_profile: false,
-        //     default_profile_image: false,
-        //     description: "The people voted for major government reform",
-        //     entities: [Object ...],
-        //     fast_followers_count: 0,
-        //     favourites_count: 99508,
-        //     followers_count: 207135672,
-        //     friends_count: 871,
-        //     has_custom_timelines: true,
-        //     is_translator: false,
-        //     listed_count: 155030,
-        //     location: "",
-        //     media_count: 2931,
-        //     name: "Elon Musk",
-        //     normal_followers_count: 207135672,
-        //     pinned_tweet_ids_str: [ "1866776699817562609" ],
-        //     possibly_sensitive: false,
-        //     profile_banner_url: "https://pbs.twimg.com/profile_banners/44196397/1726163678",
-        //     profile_image_url_https: "https://pbs.twimg.com/profile_images/1858316737780781056/kPL61o0F_normal.jpg",
-        //     profile_interstitial_type: "",
-        //     screen_name: "elonmusk",
-        //     statuses_count: 62155,
-        //     translator_type: "none",
-        //     verified: false,
-        //     withheld_in_countries: [],
-        //   },
-        //   professional: {
-        //     rest_id: "1679729435447275522",
-        //     professional_type: "Creator",
-        //     category: [],
-        //   },
-        //   tipjar_settings: {
-        //     is_enabled: false,
-        //     bandcamp_handle: "",
-        //     bitcoin_handle: "",
-        //     cash_app_handle: "",
-        //     ethereum_handle: "",
-        //     gofundme_handle: "",
-        //     patreon_handle: "",
-        //     pay_pal_handle: "",
-        //     venmo_handle: "",
-        //   },
-        //   legacy_extended_profile: {},
-        //   is_profile_translatable: false,
-        //   has_hidden_subscriptions_on_profile: false,
-        //   verification_info: {
-        //     is_identity_verified: false,
-        //     reason: [Object ...],
-        //   },
-        //   highlights_info: {
-        //     can_highlight_tweets: true,
-        //     highlighted_tweets: "466",
-        //   },
-        //   user_seed_tweet_count: 0,
-        //   business_account: {},
-        //   creator_subscriptions_count: 179,
-        //   accountUrl: "https://twitter.com/elonmusk",
-        // }
-    //   ]
+const SaveToDB = () => {
+
 }
 
 export const FetcherService = {
-    Fetch
+    client,
+    Loader,
+    Fetch,
+    ExtractStats
 }

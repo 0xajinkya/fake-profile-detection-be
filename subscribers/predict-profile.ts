@@ -119,16 +119,16 @@ export const PredictProfile: IJobProcessor<any> = async (job) => {
 
             if (res.data.prediction === 0) {
                 resultDoc = {
-                    status:  "FAKE" // Default to "FAKE" if status is not returned
+                    status: "FAKE" // Default to "FAKE" if status is not returned
                 };
             }
-            else{
+            else {
 
                 resultDoc = {
                     status: "REAL" // Default to "FAKE" if status is not returned
                 };
             }
-            
+
             console.log("✅ Prediction Result from ML Model:", resultDoc);
         } catch (error) {
             console.error("❌ Error calling ML model API:", error);
