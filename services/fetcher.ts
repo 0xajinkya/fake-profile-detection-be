@@ -1,10 +1,10 @@
-import { APIFY_API_KEY } from "@config/env";
+import { ACTOR_URL, APIFY_API_KEY, WEBHOOK_URL } from "@config/env";
 import { TwitterResponse } from "@interfaces/tweet";
 import { ApifyClient } from "apify-client";
 import axios from "axios";
 
 const client = new ApifyClient({
-    token: "apify_api_bcZ28YiJ9Goaw0hptGe5y4R97Ihhtk1DirFQ",
+    token: APIFY_API_KEY,
 });
 
 const Loader = async () => {
@@ -12,8 +12,7 @@ const Loader = async () => {
     await webhooksClient.create({
         description: 'Twitter profile actor succeeded',
         condition: { actorId: 'wbpC5fjeAxy06bonV' },
-        requestUrl: 'https://85ec-2409-40c2-6056-20cc-db62-abb4-5de5-3fbe.ngrok-free.app/webhooks',
-        // requestUrl: "https://webhook.site/bcae8819-3a4c-4fe2-827f-9d1390764807",
+        requestUrl: WEBHOOK_URL,
         eventTypes: ['ACTOR.RUN.SUCCEEDED'],
     });
     console.log("🚀 Webhooks listening!!")
@@ -36,7 +35,7 @@ const Fetch = async <T>(username: string, withTweets?: boolean) => {
         }
     };
 
-    const run = await axios.post("https://api.apify.com/v2/acts/epctex~twitter-profile-scraper/runs?token=apify_api_bcZ28YiJ9Goaw0hptGe5y4R97Ihhtk1DirFQ", input);
+    const run = await axios.post(ACTOR_URL!, input);
 
     return run;
 };
@@ -71,14 +70,8 @@ const ExtractStats = (tweets: TwitterResponse[]) => {
         hc: tweets.reduce((a, b) => a + b.entities.hashtags.length, 0) / 10,
     }
 
-    console.log(objForPrediction);
-    
     return objForPrediction;
 };
-
-const SaveToDB = () => {
-
-}
 
 export const FetcherService = {
     client,

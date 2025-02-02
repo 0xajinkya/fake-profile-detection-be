@@ -2,7 +2,7 @@ import { PRIVATE_KEY } from "@config/env";
 import { blockchain } from "libraries";
 
 async function setPredictionStatus(id: string, status: "Real" | "Fake") {
-    const account = blockchain.instance?.eth.accounts.privateKeyToAccount(PRIVATE_KEY);
+    const account = blockchain.instance?.eth.accounts.privateKeyToAccount(PRIVATE_KEY!);
     if (!account) {
         throw new Error("❌ Account not found");
     }
@@ -12,7 +12,6 @@ async function setPredictionStatus(id: string, status: "Real" | "Fake") {
     const gas = await blockchain.contract?.methods
         .setPredictionStatus(id, status)
         .estimateGas({ from: account.address });
-    console.log(gas);
     if (typeof gas === undefined) {
         throw new Error("❌ Gas not found");
     }
@@ -29,7 +28,7 @@ async function setPredictionStatus(id: string, status: "Real" | "Fake") {
 }
 
 async function getPredictionStatus(id: string) {
-    const account = blockchain.instance?.eth.accounts.privateKeyToAccount(PRIVATE_KEY);
+    const account = blockchain.instance?.eth.accounts.privateKeyToAccount(PRIVATE_KEY!);
     if (!account) {
         throw new Error("❌ Account not found");
     }

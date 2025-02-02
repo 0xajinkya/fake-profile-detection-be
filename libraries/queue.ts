@@ -1,3 +1,4 @@
+import { QUEUE_URL } from "@config/env";
 import PgBoss, { WorkHandler } from "pg-boss";
 
 export type JobKind = "PREDICT_POST" | "PREDICT_PROFILE";
@@ -7,7 +8,7 @@ export type IJobProcessor<T = RawDocument> = WorkHandler<T>;
 export type RawDocument = Record<string, any>;
 
 const Loader = async () => {
-    queue.instance = new PgBoss("postgresql://postgres:password@localhost:5432/sih_q");
+    queue.instance = new PgBoss(QUEUE_URL!);
     queue.instance.on("error", (err) => {
         console.error(err);
     });
@@ -38,7 +39,6 @@ const subscribe = async <T = RawDocument>(
     }
 
     return queue.instance.work(kind, async (job) => {
-        console.log(job);
         console.log(`Receiving ${kind}`, job.id, 'with data', job.data);
         return callback(job as any);
     });

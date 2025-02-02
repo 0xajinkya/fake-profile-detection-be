@@ -1,10 +1,8 @@
-import { IPredictionCreate, IPredictionInput, IPredictionUpdate } from "@interfaces/prediction";
+import { IPredictionInput, IPredictionUpdate } from "@interfaces/prediction";
 import { Host, PredictionStatus } from "@prisma/client";
 import { database } from "libraries";
 import { FetcherService } from "./fetcher";
 import { TwitterResponse } from "@interfaces/tweet";
-import { JsonValue } from "@prisma/client/runtime/library";
-import { APIFY_API_KEY } from "@config/env";
 
 const Add = async (data: IPredictionInput) => {
     const {
@@ -50,37 +48,7 @@ const Get = async (id: string) => {
 
 const Search = async (username: string) => {
 
-    console.log(APIFY_API_KEY);
-    const profileInfo = await FetcherService.Fetch<TwitterResponse[]>("realDonaldTrump", true);
-    // const stats = FetcherService.ExtractStats(profileInfo);
-
-    // const user = profileInfo[0].user;
-
-    // let predictionRes = await GetByHost(user.screen_name, "TWITTER");
-    // let predictionDoc: IPredictionCreate;
-    // if (!predictionRes) {
-    //     predictionDoc = {
-    //         createdAt: new Date(),
-    //         updatedAt: new Date(),
-    //         host: "TWITTER",
-    //         username: user.screen_name,
-    //         profileInfo: {
-    //             user: user,
-    //             tweets: profileInfo.map(({ user, ...tweet }) => tweet),
-    //             statsForMl: stats
-    //         } as unknown as JsonValue
-    //     };
-    //     predictionRes = await ProfilePredictionService.Add(predictionDoc);
-    // } else {
-    //     predictionRes = await Update(predictionRes.id, {
-    //         profileInfo: {
-    //             user: user,
-    //             tweets: profileInfo.map(({ user, ...tweet }) => tweet),
-    //             statsForMl: stats
-    //         } as unknown as JsonValue
-    //     });
-    // }
-
+    const profileInfo = await FetcherService.Fetch<TwitterResponse[]>(username, true);
     return profileInfo;
 };
 

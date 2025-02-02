@@ -1,5 +1,9 @@
 export const QUEUE_URL = process.env.QUEUE_URL;
-export const DB_URL = process.env.DB_URL;
-export const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS || "0x1431d7166d45D35757dbCA792D145FB281177252";
-export const PRIVATE_KEY = process.env.PRIVATE_KEY || "0x86e95af981ee01e95cb4b70271e03f79cacdc2a7ed70f1463753c928f388cc47";
-export const APIFY_API_KEY=process.env.APIFY_API_KEY;
+export const DATABASE_URL = process.env.DATABASE_URL;
+export const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
+export const PRIVATE_KEY = process.env.PRIVATE_KEY;
+export const APIFY_API_KEY=process.env.APIFY_API;
+export const COOKIE_SECRET=process.env.COOKIE_SECRET;
+export const WEBHOOK_URL=process.env.WEBHOOK_URL;
+export const ACTOR_URL=process.env.ACTOR_URL;
+export const ML_MODEL_ENDPOINT=process.env.ML_MODEL_ENDPOINT;

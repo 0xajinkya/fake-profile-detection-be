@@ -83,8 +83,6 @@ const Search = async (req: Request, res: Response) => {
     if (!username) {
         throw new Error("❌ Username not provided!");
     }
-    console.log(APIFY_API_KEY)
-    // const profileRes = await ProfilePredictionService.Search(username as string);
     const profileRes = await FetcherService.Fetch<TwitterResponse[]>(username as string, true);
 
     let predictionRes = await ProfilePredictionService.GetByHost(username as string, "TWITTER");
