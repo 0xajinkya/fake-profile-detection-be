@@ -23,7 +23,7 @@ This backend is designed to analyze Twitter profiles and determine if they are r
 ### Prerequisites
 - **Node.js** (v16 or later)
 - **Docker** (optional, for database setup)
-- **Environment Variables:** Refer to the `.env` file for required environment variables.
+- **Environment Variables:** Refer to the `.env.test` file for required environment variables.
 
 ### Installation
 ```sh
